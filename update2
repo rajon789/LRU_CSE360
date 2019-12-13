@@ -1,0 +1,113 @@
+#include <iostream>
+#include <list>
+#include <vector>
+using namespace std;
+int cache[100][100];
+int user_input[100];
+
+void showCache(int row, int col, bool is_hit)
+{
+    if(is_hit == true)
+        cout << "Hit" << endl;
+    else
+        cout << "Miss" << endl;
+
+
+    for(int i=0;i<row;i++)
+    {
+        for(int j=0;j<col;j++)
+        {
+            cout << cache[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    int m,n;
+    cout << "n :"; cin >> n;
+    cout << "m :"; cin >> m;
+    int col = n;
+    int row = m/n;
+    for(int i = 0;i<row;i++)
+    {
+        for(int j=0;j<col;j++)
+        {
+            cache[i][j] = -1;
+        }
+    }
+    int val,cache_input_count = 0;
+    while(cin >> val)
+    {
+        if(val == -1)
+            break;
+        user_input[cache_input_count] = val;
+        cache_input_count++;
+    }
+
+    list <int> recent_val;
+    bool check_repet = false;
+
+    for(int idx = 0; idx < cache_input_count; idx++ )
+    {
+        int cache_idx_no = user_input[idx] % row;
+        for(int i = 0; i < col; i++)
+        {
+            if(cache[cache_idx_no][i] == -1)
+            {
+                for(auto repeter = 0; repeter < col; repeter++)
+                {
+                    //cout << "outside: " << cache[cache_idx_no][repeter] << " " << user_input[idx] << endl;
+                    if(cache[cache_idx_no][repeter] == user_input[idx])
+                    {
+                        //cout << "inside: " << cache[cache_idx_no][repeter] << " " << user_input[idx] << endl;
+                        recent_val.remove(user_input[idx]);
+                        recent_val.push_back(user_input[idx]);
+                        check_repet = true;
+                        break;
+                    }
+                    else
+                    {
+                        cache[cache_idx_no][i] = user_input[idx];
+                        recent_val.push_back(user_input[idx]);
+                    }
+                }
+                break;
+            }
+             else
+            {
+                for(auto i = 0; i < col; i++)
+                {
+                    for(auto itr = recent_val.begin(); itr != recent_val.end(); itr++)
+                    {
+                        if(*itr == user_input[idx])
+                        {
+                            recent_val.remove(user_input[idx]);
+                            recent_val.push_back(user_input[idx]);
+                        }
+                    }
+                }
+
+            }
+        }
+
+
+        /*for(auto i = 0; i < col; i++)
+        {
+            if(cache[cache_idx_no][col] != -1)
+            {
+                for(auto itr = recent_val.begin(); itr != recent_val.end(); itr++)
+                {
+                    if(*itr == user_input[idx])
+                    {
+                        recent_val.remove(user_input[idx]);
+                        recent_val.push_back(user_input[idx]);
+                    }
+                }
+            }
+        }*/
+        showCache(row,col,check_repet);
+    }
+    int x;
+    cin >> x;
+}
